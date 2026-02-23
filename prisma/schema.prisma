@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  owner
+  member
+}
+
+model Users {
+  id Int @id @default(autoincrement())
+  username String
+  email String @unique
+  password String
+  workspaceMem WorkspaceMember[]
+  created_at DateTime @default(now())
+  updated_at DateTime? @updatedAt
+  deleted_at DateTime?
+}
+
+model Workspace {
+  id Int @id @default(autoincrement())
+  name String
+  workspaceMem WorkspaceMember[]
+  board Board[]
+  created_at DateTime @default(now())
+  updated_at DateTime? @updatedAt
+  deleted_at DateTime?
+}
+
+
+model WorkspaceMember {
+  id Int @id @default(autoincrement())
+  role Role
+  user_id Int
+  workspace_id Int 
+  user Users @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspace_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  updated_at DateTime? @updatedAt
+  deleted_at DateTime?
+
+  @@unique([user_id, workspace_id])
+}
+
+model Board {
+  id Int @id @default(autoincrement())
+  name String
+  workspace_id Int
+  workspace Workspace @relation(fields: [workspace_id], references: [id], onDelete: Cascade)
+  column Column[]
+  created_at DateTime @default(now())
+  updated_at DateTime? @updatedAt
+  deleted_at DateTime?
+}
+
+model Column {
+  id Int @id @default(autoincrement())
+  name String
+  board_id Int
+  board Board @relation(fields: [board_id], references: [id], onDelete: Cascade)
+  task Task[]
+  created_at DateTime @default(now())
+  updated_at DateTime? @updatedAt
+  deleted_at DateTime?
+}
+
+model Task {
+  id Int @id @default(autoincrement())
+  name String
+  column_id Int
+  column Column @relation(fields: [column_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  updated_at DateTime? @updatedAt
+  deleted_at DateTime?
+}
