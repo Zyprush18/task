@@ -8,4 +8,6 @@ const adapter = new PrismaPg({
     connectionString: process.env.DATABASE_URL
 });
 
-export const prisma = new PrismaClient({adapter});
+const prisma = new PrismaClient({adapter});
+
+export default prisma;

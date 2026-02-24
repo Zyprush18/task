@@ -9,7 +9,7 @@ const port = 5000;
 
 server.use(morgan('dev'));
 server.use(express.json());
-server.use(route);
+server.use('/api',route);
 
 
 server.listen(port, () => {
