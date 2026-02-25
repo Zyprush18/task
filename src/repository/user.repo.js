@@ -2,13 +2,18 @@
 
 import prisma from "../prisma/prismaClient.js";
 
-export const getAll = async () =>{
-    return await prisma.users.findMany()
-}
 
-
-export const createUsers = async (userReq) => {
+export const RegisterRepo = async (userReq) => {
     return await prisma.users.create({
         data: userReq
     });
+}
+
+
+export const LoginRepo = async (email) => {
+    return await prisma.users.findUnique({
+        where: {
+            email: email
+        }
+    }); 
 }

@@ -8,6 +8,6 @@ export const hashingPw = (pass) =>{
     return bcrypt.hashSync(pass, hash)
 }
 
-// export const verifiedPw = (pass,hashPW) => {
-//     return bcrypt.compareSync(pass, hashPW);
-// }
+export const verifiedPw = (pass,hashPW) => {
+    return bcrypt.compareSync(pass, hashPW);
+}
