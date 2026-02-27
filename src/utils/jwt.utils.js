@@ -2,6 +2,8 @@
 
 import jwt from 'jsonwebtoken';
 
+export const blaclistToken = new Set();
+
 const secret_key = process.env.SECRET_KEY
 
 export const generateToken = (id, email) => {
@@ -12,3 +14,10 @@ export const generateToken = (id, email) => {
 
     return sign
 }
+
+
+export const verificationToken = (token) => {
+    return jwt.verify(token, secret_key, {algorithms: 'HS256'});
+}
+
+

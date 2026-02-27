@@ -1,7 +1,9 @@
 "use strict";
 
+import { get } from "express-http-context";
 import { loginService, registerService } from "../service/auth.service.js";
 import { loginSchema, registerSchema } from "../validation/auth.validtion.js";
+import { blaclistToken } from "../utils/jwt.utils.js";
 
 export const Register = async (req, res) => {
   try {
@@ -43,10 +45,16 @@ export const Login = async (req, res) => {
 
     const token = await loginService(bodyreq.data);
 
-    res.status(201).json({
-      message: "success login",
-      access_token: token
-    });
+    res
+      .status(201)
+      .cookie("access_token", token, {
+        httpOnly: true,
+        secure: process.env.STATUS_APP === 'production',
+        sameSite: "strict",
+      })
+      .json({
+        message: "success login",
+      });
   } catch (error) {
     if (error.message === "data not found") {
       return res.status(404).json({
@@ -58,4 +66,10 @@ export const Login = async (req, res) => {
       message: "internal server Error",
     });
   }
+};
+
+export const logout = async (req, res) => {
+  res.status(200).clearCookie('access_token').json({
+    message: "success logout",
+  });
 };

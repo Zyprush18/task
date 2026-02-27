@@ -27,7 +27,7 @@ export const loginService =  async (bodyreq) =>{
 
     const token = generateToken(data.id, data.email);
 
-    return token
+    return `Bearer ${token}`;
 }
 
 
