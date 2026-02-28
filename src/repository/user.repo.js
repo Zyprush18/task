@@ -17,3 +17,11 @@ export const LoginRepo = async (email) => {
         }
     }); 
 }
+
+export const getUser = async (id_user) =>{
+    return await prisma.users.findUnique({
+        where: {
+            id: id_user
+        }
+    })
+}

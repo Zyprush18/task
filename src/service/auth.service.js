@@ -1,8 +1,9 @@
 'use strict'
 
-import { LoginRepo, RegisterRepo } from "../repository/user.repo.js";
+import { email } from "zod";
+import { getUser, LoginRepo, RegisterRepo } from "../repository/user.repo.js";
 import { hashingPw, verifiedPw } from "../utils/hashing.utils.js";
-import { generateToken } from "../utils/jwt.utils.js";
+import { generateRefreshRoken, generateToken, verificationToken } from "../utils/jwt.utils.js";
 
 export const registerService = async (bodyReq) => {
    try {
@@ -17,7 +18,7 @@ export const registerService = async (bodyReq) => {
 
 export const loginService =  async (bodyreq) =>{
     const data = await LoginRepo(bodyreq.email);
-    if (data === null) {
+    if (!data) {
         throw new Error("data not found");    
     }
     
@@ -25,9 +26,39 @@ export const loginService =  async (bodyreq) =>{
         throw new Error("data not found");  
     }
 
-    const token = generateToken(data.id, data.email);
+    const tokenAccess = generateToken(data.id, data.email);
+    const tokenRefresh = generateRefreshRoken(data.id, data.email);
 
-    return `Bearer ${token}`;
+    return {
+        access_token: tokenAccess,
+        refresh_token: tokenRefresh 
+    }
+}
+
+
+export const generateTokenFromAccessToken = async (token) =>{
+    const refresh = verificationToken('refresh_token', token);
+    const data = await getUser(refresh.id_user);
+    const newAccessToken = generateToken(data.id, data.email);
+
+
+    return newAccessToken; 
+}
+
+
+export const getProfile = async (id) =>{
+    const data = await getUser(id);
+    if (!data) {
+        throw new Error("data not found"); 
+    }
+
+    return {
+        id: data.id,
+        username: data.username,
+        email: data.email,
+        created_at: data.created_at,
+        updated_at: data.updated_at
+    };
 }
 
 

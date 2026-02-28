@@ -5,8 +5,7 @@ import { verificationToken } from "../utils/jwt.utils.js";
 
 export const checkAuth = (req, res, next) => {
   try {
-        const auth = req.signedCookies.access_token;
-    
+    const auth = req.headers.authorization;
     if (!auth) {
         return res.status(401).json({
             message: 'auth token is required'
@@ -21,7 +20,7 @@ export const checkAuth = (req, res, next) => {
     }
 
     // check jwt
-    const data = verificationToken(token[1]);
+    const data = verificationToken('access_token',token[1]);
     // set context
     set('user_id', data.id_user);
     set('email_user', data.email_user);
@@ -29,7 +28,7 @@ export const checkAuth = (req, res, next) => {
     next();
     } catch (error) {
         return res.status(401).json({
-                message: error.message
+            message: error.message
         });
     }
 };

@@ -1,9 +1,8 @@
 "use strict";
 
 import { get } from "express-http-context";
-import { loginService, registerService } from "../service/auth.service.js";
+import { generateTokenFromAccessToken, getProfile, loginService, registerService } from "../service/auth.service.js";
 import { loginSchema, registerSchema } from "../validation/auth.validtion.js";
-import { blaclistToken } from "../utils/jwt.utils.js";
 
 export const Register = async (req, res) => {
   try {
@@ -47,13 +46,14 @@ export const Login = async (req, res) => {
 
     res
       .status(201)
-      .cookie("access_token", token, {
+      .cookie("refresh_token", token.refresh_token, {
         httpOnly: true,
-        secure: process.env.STATUS_APP === 'production',
+        secure: process.env.STATUS_APP === "production",
         sameSite: "strict",
       })
       .json({
         message: "success login",
+        access_token: token.access_token,
       });
   } catch (error) {
     if (error.message === "data not found") {
@@ -69,7 +69,58 @@ export const Login = async (req, res) => {
 };
 
 export const logout = async (req, res) => {
-  res.status(200).clearCookie('access_token').json({
-    message: "success logout",
-  });
+  res
+    .status(200)
+    .clearCookie("refresh_token", {
+      httpOnly: true,
+      secure: process.env.STATUS_APP === "production",
+      sameSite: "strict",
+    })
+    .json({
+      message: "success logout",
+    });
 };
+
+export const refresh = async (req, res) => {
+  try {
+    const refresh = req.cookies.refresh_token;
+    if (!refresh) {
+      return res.status(401).json({
+        message: "refresh token is missing",
+      });
+    }
+
+    const access_token = await generateTokenFromAccessToken(refresh);
+
+    res.status(200).json({
+      message: "succcess generate new access token",
+      new_access_token: access_token
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+
+export const profile = async (req, res) => {
+  try {
+    const id = get('user_id');
+    const dataUser = await getProfile(id);
+    res.status(200).json({
+      message: 'success',
+      data: dataUser
+    });
+  } catch (error) {
+    if (error.message === "data not found") {
+      return res.status(404).json({
+        message: "not found user",
+      });
+    }
+
+    res.status(500).json({
+      message: 'internal server error'
+    })
+  }
+}
