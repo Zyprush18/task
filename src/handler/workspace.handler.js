@@ -1,0 +1,118 @@
+import { get } from "express-http-context";
+import { addMemberWorkspace, addOwnerWorkspace, getWorksapce, getWspaceById } from "../service/workspace.service.js";
+import { workspaceMemSchema, workspaceSchema } from "../validation/workspace.validation.js";
+
+export const WorkspaceIndex = async (req, res) => {
+  try {
+    const id = get("user_id");
+    const data = await getWorksapce(id);
+
+    res.status(200).json({
+      message: "success",
+      data: data,
+    });
+  } catch (error) {
+    console.log(error);
+    
+
+    if (error.message === "not found workspace") {
+      return res.status(404).json({
+        message: "Invalid Email or Password",
+      });
+    }
+
+    res.status(500).json({
+      message: "internal server Error",
+    });
+  }
+};
+
+
+export const storeOwnerWorkspace = async (req, res) => {
+  try {
+    const bodyreq = workspaceSchema.safeParse(req.body);
+    if (!bodyreq.success) {
+      return res.status(400).json({
+        message: "Validation Error",
+        error: bodyreq.error.format(),
+      });
+    }
+    const id = get("user_id");
+    await addOwnerWorkspace(id, bodyreq);
+
+    res.status(201).json({
+      message: 'success add new workspace'
+    });
+  } catch (error) {
+    console.log(error);
+    
+    res.status(500).json({
+      message: 'internal server error'
+    })
+  }
+}
+
+export const storeMemWorkspace = async (req, res) => {
+  try {
+    const bodyreq = workspaceMemSchema.safeParse(req.body);
+    if (!bodyreq.success) {
+      return res.status(400).json({
+        message: "Validation Error",
+        error: bodyreq.error.format(),
+      });
+    }
+    const workspace_id = req.params.id_workspace;
+    if (!workspace_id) {
+      return res.status(400).json({
+        message: 'params worksapce id is missing'
+      });
+    }
+    const owner_id = get("user_id");
+    await addMemberWorkspace(bodyreq.data.user_id, parseInt(workspace_id), owner_id);
+
+    return res.status(201).json({
+      message: 'success add member'
+    });
+
+  } catch (error) {
+    if (error.message === 'not found') {
+      return res.status(404).json({
+        message: 'not found user or workspace'
+      });
+    }
+    res.status(500).json({
+      message: 'internal server error'
+    }) 
+  }
+}
+
+export const showWorkspace = async (req, res) => {
+  try {
+    const workspace_id = req.params.id_workspace;
+    if (!workspace_id) {
+      return res.status(400).json({
+        message: 'params worksapce id is missing'
+      });
+    }
+
+    const owner_id = get("user_id");
+    const data = await getWspaceById(parseInt(workspace_id), owner_id);
+
+    res.status(200).json({
+      message: "success",
+      data: data,
+    });
+  } catch (error) {
+    console.log(error);
+    
+
+    if (error.message === "not found") {
+      return res.status(404).json({
+        message: "not found workspace",
+      });
+    }
+    res.status(500).json({
+      message: "internal server Error",
+    });
+  }
+}

@@ -1,8 +1,6 @@
-"use strict";
-
 import { get } from "express-http-context";
 import { generateTokenFromAccessToken, getProfile, loginService, registerService } from "../service/auth.service.js";
-import { loginSchema, registerSchema } from "../validation/auth.validtion.js";
+import { loginSchema, registerSchema } from "../validation/auth.validation.js";
 
 export const Register = async (req, res) => {
   try {
@@ -97,6 +95,12 @@ export const refresh = async (req, res) => {
       new_access_token: access_token
     });
   } catch (error) {
+    if (error.message === 'jwt expire') {
+      return res.status(401).json({
+        message: 'refresh token expire'
+      });
+    }
+
     res.status(500).json({
       message: error.message,
     });

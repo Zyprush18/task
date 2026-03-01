@@ -1,5 +1,3 @@
-'use strict'
-
 import express  from 'express';
 import morgan from 'morgan';
 import route  from './routes/api.route.js';

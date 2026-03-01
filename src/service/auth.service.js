@@ -1,6 +1,3 @@
-'use strict'
-
-import { email } from "zod";
 import { getUser, LoginRepo, RegisterRepo } from "../repository/user.repo.js";
 import { hashingPw, verifiedPw } from "../utils/hashing.utils.js";
 import { generateRefreshRoken, generateToken, verificationToken } from "../utils/jwt.utils.js";

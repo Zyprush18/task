@@ -1,5 +1,3 @@
-'use strict'
-
 import { set } from "express-http-context";
 import { verificationToken } from "../utils/jwt.utils.js";
 
