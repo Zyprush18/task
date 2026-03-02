@@ -1,5 +1,5 @@
 import { get } from "express-http-context";
-import { addMemberWorkspace, addOwnerWorkspace, getWorksapce, getWspaceById } from "../service/workspace.service.js";
+import { addMemberWorkspace, addOwnerWorkspace, deleteWorkspace, getWorksapce, getWspaceById, updateWorkspace } from "../service/workspace.service.js";
 import { workspaceMemSchema, workspaceSchema } from "../validation/workspace.validation.js";
 
 export const WorkspaceIndex = async (req, res) => {
@@ -103,9 +103,6 @@ export const showWorkspace = async (req, res) => {
       data: data,
     });
   } catch (error) {
-    console.log(error);
-    
-
     if (error.message === "not found") {
       return res.status(404).json({
         message: "not found workspace",
@@ -114,5 +111,72 @@ export const showWorkspace = async (req, res) => {
     res.status(500).json({
       message: "internal server Error",
     });
+  }
+}
+
+
+export const UpdatedWorkspace = async (req, res) => {
+  try {
+     const workspace_id = parseInt(req.params.id_workspace);
+    if (!workspace_id) {
+      return res.status(400).json({
+        message: 'params worksapce id is missing'
+      });
+    }
+
+    const owner_id = get("user_id");
+
+    const bodyreq =  workspaceSchema.safeParse(req.body);
+    if (!bodyreq.success) {
+      return res.status(400).json({
+        message: "Validation Error",
+        error: bodyreq.error.format(),
+      });
+    }
+
+    await updateWorkspace(bodyreq.data, workspace_id, owner_id);
+    res.status(200).json({
+      message: 'success update'
+    }) 
+  } catch (error) {
+    if (error.code === "P2025") {
+      return res.status(404).json({
+        message: "not found workspace",
+      });
+    }
+    res.status(500).json({
+      message: 'internal server error'
+    })
+    
+  }
+}
+
+
+export const deletedWorkspace = async (req, res) => {
+   try {
+     const workspace_id = parseInt(req.params.id_workspace);
+    if (!workspace_id) {
+      return res.status(400).json({
+        message: 'params worksapce id is missing'
+      });
+    }
+
+    const owner_id = get("user_id");
+
+    await deleteWorkspace(workspace_id, owner_id);
+    res.status(200).json({
+      message: 'success delete'
+    }) 
+  } catch (error) {
+    console.log(error);
+    
+    if (error.code === "P2025" || error.message == 'not found') {
+      return res.status(404).json({
+        message: "not found workspace",
+      });
+    }
+    res.status(500).json({
+      message: 'internal server error'
+    })
   }
 }
