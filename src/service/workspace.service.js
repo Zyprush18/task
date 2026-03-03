@@ -4,6 +4,7 @@ import {
   deleteWorskspaceByUser,
   getWorksapceById,
   getWorkspaceByUser,
+  updateMember,
   updateWorkspaceByuser,
 } from "../repository/workspace.repo.js";
 
@@ -33,10 +34,6 @@ export const addOwnerWorkspace = async (id, bodyreq) => {
   return await createWorkspace(updateReq);
 };
 
-export const addMemberWorkspace = async (id_user, workspace_id, owner_id) => {
-  return await createMember(id_user, workspace_id, owner_id);
-};
-
 export const getWspaceById = async (id, owner_id) => {
   const data = await getWorksapceById(id, owner_id);
   if (!data) {
@@ -46,12 +43,27 @@ export const getWspaceById = async (id, owner_id) => {
   return data;
 };
 
-
 export const updateWorkspace = async (req, workspace_id, owner_id) => {
   return await updateWorkspaceByuser(req, workspace_id, owner_id);
-}
+};
 
 export const deleteWorkspace = async (workspace_id, owner_id) => {
   const now = new Date();
-  return await deleteWorskspaceByUser(workspace_id, owner_id, now.toISOString());
-}
+  return await deleteWorskspaceByUser(
+    workspace_id,
+    owner_id,
+    now.toISOString(),
+  );
+};
+
+export const addMemberWorkspace = async (id_user, workspace_id, owner_id) => {
+  return await createMember(id_user, workspace_id, owner_id);
+};
+
+export const updateMemberWorkspace = async (
+  reqData,
+  workspace_id,
+  owner_id,
+) => {
+  return updateMember(reqData, workspace_id, owner_id);
+};

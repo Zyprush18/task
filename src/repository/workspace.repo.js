@@ -49,6 +49,56 @@ export const getWorksapceById = async (workspace_id, owner_id) => {
   return workspace;
 };
 
+export const updateWorkspaceByuser = async (req, workspace_id, owner_id) => {
+  return await prisma.workspace.update({
+    where: {
+      id: workspace_id,
+      workspaceMem: {
+        some: {
+          user_id: owner_id,
+          role: "owner",
+          deleted_at: null,
+        },
+      },
+      deleted_at: null,
+    },
+    data: req,
+  });
+};
+
+export const deleteWorskspaceByUser = async (workspace_ids, owner_id, time) => {
+  return prisma.$transaction(async (tx) => {
+    const member = await tx.workspaceMember.updateMany({
+      where: {
+        workspace_id: workspace_ids,
+      },
+      data: {
+        deleted_at: time,
+      },
+    });
+
+    if (!member) {
+      throw new Error("not found");
+    }
+
+    return await tx.workspace.update({
+      where: {
+        id: workspace_ids,
+        workspaceMem: {
+          some: {
+            user_id: owner_id,
+            role: "owner",
+          },
+        },
+        deleted_at: null,
+      },
+      data: {
+        deleted_at: time,
+      },
+    });
+  });
+};
+
 export const createMember = async (member_id, worspace_id, owner_id) => {
   return await prisma.$transaction(async (tx) => {
     const workspace = await getWorksapceById(worspace_id, owner_id);
@@ -84,51 +134,32 @@ export const createMember = async (member_id, worspace_id, owner_id) => {
   });
 };
 
-export const updateWorkspaceByuser = async (req, workspace_id, owner_id) => {
-  return await prisma.workspace.update({
-    where: {
-      id: workspace_id,
-      workspaceMem: {
-        some: {
-          user_id: owner_id,
-          role: "owner",
-          deleted_at: null,
-        },
-      },
-      deleted_at: null,
-    },
-    data: req,
-  });
-};
+export const updateMember = async (req, workspace_id, owner_id) => {
+  return await prisma.$transaction(async (tx) => {
+    const workspace = await getWorksapceById(workspace_id, owner_id);
 
-export const deleteWorskspaceByUser = async (workspace_ids, owner_id, time) => {
-  return prisma.$transaction(async (tx) => {
-    const member = await tx.workspaceMember.updateMany({
+    const users = await tx.users.findUnique({
       where: {
-        workspace_id: workspace_ids
-    },
-      data: {
-        deleted_at: time,
+        id: req.user_id,
+        deleted_at: null,
       },
     });
 
-    if (!member) {
-      throw new Error("not found");
+    if (!users) {
+      throw new Error(`not found user id: ${member_id}`);
     }
 
-    return await tx.workspace.update({
+    return await tx.workspaceMember.update({
       where: {
-        id: workspace_ids,
-        workspaceMem: {
-          some: {
-            user_id: owner_id,
-            role: "owner",
-          },
-        },
+        workspace_id: workspace.id,
+        user_id: req.old_user_id,
+        role: "member",
         deleted_at: null,
       },
       data: {
-        deleted_at: time,
+        user: {
+            user_id: users.id 
+        }
       },
     });
   });
