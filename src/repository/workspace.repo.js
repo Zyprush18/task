@@ -6,14 +6,21 @@ export const getWorkspaceByUser = async (id) => {
       workspaceMem: {
         some: {
           user_id: id,
-          deleted_at: null,
         },
       },
       deleted_at: null,
     },
     include: {
-      board: true,
-      workspaceMem: true,
+      board: {
+        where: {
+          deleted_at: null,
+        },
+      },
+      workspaceMem: {
+        where: {
+          deleted_at: null,
+        },
+      },
     },
   });
 };
@@ -134,7 +141,7 @@ export const createMember = async (member_id, worspace_id, owner_id) => {
   });
 };
 
-export const updateMember = async (req, workspace_id, owner_id) => {
+export const updateMember = async (req, workspace_id, owner_id, time) => {
   return await prisma.$transaction(async (tx) => {
     const workspace = await getWorksapceById(workspace_id, owner_id);
 
@@ -146,21 +153,67 @@ export const updateMember = async (req, workspace_id, owner_id) => {
     });
 
     if (!users) {
-      throw new Error(`not found user id: ${member_id}`);
+      throw new Error(`not found`);
     }
 
-    return await tx.workspaceMember.update({
-      where: {
-        workspace_id: workspace.id,
-        user_id: req.old_user_id,
-        role: "member",
-        deleted_at: null,
-      },
-      data: {
-        user: {
-            user_id: users.id 
-        }
-      },
+    const member = workspace.workspaceMem.find((wm) => {
+      return (
+        wm.role === "member" &&
+        wm.user_id === req.user_id &&
+        wm.workspace_id === workspace_id
+      );
     });
+
+    // ubah deleted_at member yang mau di update
+      await tx.workspaceMember.update({
+        where: {
+          role: "member",
+          user_id_workspace_id: {
+            user_id: req.old_user_id,
+            workspace_id: workspace.id,
+          },
+        },
+        data: {
+          deleted_at: time,
+        },
+      });
+
+
+    if (member) {
+
+      // ubah deleted_at member yang telah di hapus menjadi null
+      await tx.workspaceMember.update({
+        where: {
+          role: "member",
+          user_id_workspace_id: {
+            user_id: req.user_id,
+            workspace_id: workspace.id,
+          },
+        },
+        data: {
+          deleted_at: null,
+        },
+      });
+
+      
+    } else {
+      return await prisma.workspaceMember.create({
+        data: {
+          role: "member",
+          user: {
+            connect: {
+              id: users.id,
+            },
+          },
+          workspace: {
+            connect: {
+              id: workspace.id,
+            },
+          },
+        },
+      });
+    }
   });
 };
+
+export const deleteMember = async (owner_id, member_id, workspace_id) => {};

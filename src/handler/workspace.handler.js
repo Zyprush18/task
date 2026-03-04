@@ -23,8 +23,6 @@ export const WorkspaceIndex = async (req, res) => {
       data: data,
     });
   } catch (error) {
-    console.log(error);
-
     if (error.message === "not found workspace") {
       return res.status(404).json({
         message: "Invalid Email or Password",
@@ -53,8 +51,6 @@ export const storeOwnerWorkspace = async (req, res) => {
       message: "success add new workspace",
     });
   } catch (error) {
-    console.log(error);
-
     res.status(500).json({
       message: "internal server error",
     });
@@ -140,8 +136,6 @@ export const deletedWorkspace = async (req, res) => {
       message: "success delete",
     });
   } catch (error) {
-    console.log(error);
-
     if (error.code === "P2025" || error.message == "not found") {
       return res.status(404).json({
         message: "not found workspace",
@@ -193,7 +187,6 @@ export const storeMemWorkspace = async (req, res) => {
 export const updateMemWorkspace = async (req, res) => {
   try {
     const bodyreq = workspaceMemSchema.safeParse(req.body);
-    console.log(!bodyreq.data.old_user_id);
     
     if (!bodyreq.success) {
       return res.status(400).json({
@@ -214,12 +207,13 @@ export const updateMemWorkspace = async (req, res) => {
       message: "success update member",
     });
   } catch (error) {
-    console.log(error);
-    
-
     if (error.message === "not found") {
       return res.status(404).json({
         message: "not found user or workspace",
+      });
+    }else if (error.code === 'P2002'){
+      return res.status(400).json({
+        message: "user already exists",
       });
     }
     res.status(500).json({

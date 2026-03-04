@@ -65,5 +65,6 @@ export const updateMemberWorkspace = async (
   workspace_id,
   owner_id,
 ) => {
-  return updateMember(reqData, workspace_id, owner_id);
+  const now = new Date().toISOString();
+  return updateMember(reqData, workspace_id, owner_id,now);
 };
