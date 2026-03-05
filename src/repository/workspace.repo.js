@@ -216,4 +216,33 @@ export const updateMember = async (req, workspace_id, owner_id, time) => {
   });
 };
 
-export const deleteMember = async (owner_id, member_id, workspace_id) => {};
+export const deleteMember = async (owner_id, member_id, workspace_id, time) => {
+ return prisma.$transaction(async (tx) => {
+  const workspace = await getWorksapceById(workspace_id, owner_id);
+  const users = await tx.users.findUnique({
+      where: {
+        id: member_id,
+        deleted_at: null,
+      },
+    });
+
+    if (!users) {
+      throw new Error(`not found`);
+    }
+
+
+    return tx.workspaceMember.update({
+      where: {
+        role: 'member',
+        user_id_workspace_id: {
+          user_id: users.id,
+          workspace_id: workspace.id
+        },
+        deleted_at: null
+      },
+      data: {
+        deleted_at: time
+      }
+    });
+ })
+};

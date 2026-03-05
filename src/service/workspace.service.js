@@ -1,6 +1,7 @@
 import {
   createMember,
   createWorkspace,
+  deleteMember,
   deleteWorskspaceByUser,
   getWorksapceById,
   getWorkspaceByUser,
@@ -66,5 +67,11 @@ export const updateMemberWorkspace = async (
   owner_id,
 ) => {
   const now = new Date().toISOString();
-  return updateMember(reqData, workspace_id, owner_id,now);
+  return await updateMember(reqData, workspace_id, owner_id,now);
 };
+
+
+export const deleteMemberWorkspace = async (owner_id, member_id, workspace_id) => {
+    const now = new Date().toISOString();
+    return await deleteMember(owner_id,member_id, workspace_id, now);
+}

@@ -2,6 +2,7 @@ import { get } from "express-http-context";
 import {
   addMemberWorkspace,
   addOwnerWorkspace,
+  deleteMemberWorkspace,
   deleteWorkspace,
   getWorksapce,
   getWspaceById,
@@ -175,7 +176,7 @@ export const storeMemWorkspace = async (req, res) => {
   } catch (error) {
     if (error.message === "not found") {
       return res.status(404).json({
-        message: "not found user or workspace",
+        message: "not found member",
       });
     }
     res.status(500).json({
@@ -209,7 +210,7 @@ export const updateMemWorkspace = async (req, res) => {
   } catch (error) {
     if (error.message === "not found") {
       return res.status(404).json({
-        message: "not found user or workspace",
+        message: "not found not found member",
       });
     }else if (error.code === 'P2002'){
       return res.status(400).json({
@@ -221,3 +222,37 @@ export const updateMemWorkspace = async (req, res) => {
     });
   }
 };
+
+
+export const deleteMemWorkpace =  async (req, res) => {
+  try {
+    const workspace_id = parseInt(req.params.id_workspace);
+    const member_id = parseInt(req.params.id_member);
+    if (!workspace_id || !member_id) {
+      return res.status(400).json({
+        message: "params worksapce id is missing",
+      });
+    }
+    const owner_id = get("user_id");
+
+    await deleteMemberWorkspace(owner_id, member_id, workspace_id);
+    return res.status(200).json({
+      message: "success delete member",
+    });
+  } catch (error) {
+    console.log(error.code);
+    
+    if (error.message === "not found" || error.code === 'P2025') {
+      return res.status(404).json({
+        message: "not found member",
+      });
+    }else if (error.code === 'P2002'){
+      return res.status(400).json({
+        message: "user already exists",
+      });
+    }
+    res.status(500).json({
+      message: "internal server error",
+    });
+  }
+}

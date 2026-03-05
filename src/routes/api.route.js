@@ -9,6 +9,7 @@ import {
 import { checkAuth } from "../middleware/auth.middleware.js";
 import {
   deletedWorkspace,
+  deleteMemWorkpace,
   showWorkspace,
   storeMemWorkspace,
   storeOwnerWorkspace,
@@ -36,5 +37,6 @@ route.delete("/workspace/:id_workspace", checkAuth, deletedWorkspace);
 // workspace member
 route.post("/workspace/createMem/:id_workspace", checkAuth, storeMemWorkspace);
 route.put("/workspace/updateMem/:id_workspace", checkAuth, updateMemWorkspace);
+route.delete("/workspace/:id_workspace/deleteMem/:id_member", checkAuth, deleteMemWorkpace);
 
 export default route;
