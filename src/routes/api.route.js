@@ -17,6 +17,13 @@ import {
   updateMemWorkspace,
   WorkspaceIndex,
 } from "../handler/workspace.handler.js";
+import {
+  BoardIndex,
+  deleteBoard,
+  ShowBoard,
+  StoreBoard,
+  updateBoard,
+} from "../handler/board.handler.js";
 
 const route = express.Router();
 
@@ -37,6 +44,17 @@ route.delete("/workspace/:id_workspace", checkAuth, deletedWorkspace);
 // workspace member
 route.post("/workspace/createMem/:id_workspace", checkAuth, storeMemWorkspace);
 route.put("/workspace/updateMem/:id_workspace", checkAuth, updateMemWorkspace);
-route.delete("/workspace/:id_workspace/deleteMem/:id_member", checkAuth, deleteMemWorkpace);
+route.delete(
+  "/workspace/:id_workspace/deleteMem/:id_member",
+  checkAuth,
+  deleteMemWorkpace,
+);
+
+// board
+route.get("/board", checkAuth, BoardIndex);
+route.post("/board/create", checkAuth, StoreBoard);
+route.get("/board/:id_board", checkAuth, ShowBoard);
+route.patch("/board/:id_board", checkAuth, updateBoard);
+route.delete("/board/:id_board", checkAuth, deleteBoard);
 
 export default route;
