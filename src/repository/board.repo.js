@@ -42,6 +42,7 @@ export const createBord = async (req) => {
         {
           name: "to do",
           board_id: board.id,
+          
         },
         {
           name: "on progres",
@@ -57,7 +58,7 @@ export const createBord = async (req) => {
 };
 
 export const getBoardbyId = async (user_id, id) => {
-  return prisma.board.findUnique({
+  const board = await prisma.board.findUnique({
     where: {
       id: id,
       workspace: {
@@ -79,6 +80,12 @@ export const getBoardbyId = async (user_id, id) => {
       },
     },
   });
+
+  if (!board) {
+    throw new Error("not found");
+  }
+
+  return board;
 };
 
 export const boardUpdate = async (id, user_id, req) => {
@@ -125,8 +132,82 @@ export const boardDelete = async (id, user_id, time) => {
         deleted_at: null,
       },
       data: {
-        deleted_at: time
+        deleted_at: time,
+        column: {
+          updateMany: {
+            data: {
+              deleted_at: time
+            }
+          }
+        }
       },
     });
   });
 };
+
+export const createColumn = async (user_id,req) => {
+  return await prisma.$transaction(async (tx)=> {
+    const board = await getBoardbyId(user_id, req.board_id);
+    if (!board) {
+      throw new Error("not found");
+    }
+
+    return await tx.column.create({
+      data: {
+        name: req.name,
+        board: {
+          connect: {
+            id: board.id
+          }
+        }
+      }
+    })
+  });
+}
+
+export const columnUpdate = async (id,user_id, req) => {
+  return await prisma.column.update({
+      where: {
+        id: id,
+        deleted_at: null,
+        board: {
+          id: req.board_id,
+          deleted_at: null,
+          workspace: {
+            workspaceMem: {
+              some: {
+                user_id: user_id
+              }
+            }
+          }
+        }
+      },
+      data: {
+        name: req.name
+      }
+    });
+}
+
+
+export const columnDelete = async (id, user_id,board_id, time) => {
+  return await prisma.column.update({
+    where: {
+        id: id,
+        deleted_at: null,
+        board: {
+          id: board_id,
+          deleted_at: null,
+          workspace: {
+            workspaceMem: {
+              some: {
+                user_id: user_id
+              }
+            }
+          }
+        }
+      },
+      data: {
+        deleted_at: time
+      }
+  });
+}

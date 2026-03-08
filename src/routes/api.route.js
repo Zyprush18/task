@@ -20,9 +20,12 @@ import {
 import {
   BoardIndex,
   deleteBoard,
+  deleteColumn,
   ShowBoard,
   StoreBoard,
+  storeColumn,
   updateBoard,
+  updateColumn,
 } from "../handler/board.handler.js";
 
 const route = express.Router();
@@ -44,11 +47,7 @@ route.delete("/workspace/:id_workspace", checkAuth, deletedWorkspace);
 // workspace member
 route.post("/workspace/createMem/:id_workspace", checkAuth, storeMemWorkspace);
 route.put("/workspace/updateMem/:id_workspace", checkAuth, updateMemWorkspace);
-route.delete(
-  "/workspace/:id_workspace/deleteMem/:id_member",
-  checkAuth,
-  deleteMemWorkpace,
-);
+route.delete("/workspace/:id_workspace/deleteMem/:id_member", checkAuth,deleteMemWorkpace);
 
 // board
 route.get("/board", checkAuth, BoardIndex);
@@ -56,5 +55,13 @@ route.post("/board/create", checkAuth, StoreBoard);
 route.get("/board/:id_board", checkAuth, ShowBoard);
 route.patch("/board/:id_board", checkAuth, updateBoard);
 route.delete("/board/:id_board", checkAuth, deleteBoard);
+
+// column
+route.post("/board/create/column", checkAuth, storeColumn);
+route.put("/board/column/:id_column", checkAuth, updateColumn);
+route.delete("/board/:id_board/column/:id_column", checkAuth, deleteColumn);
+
+
+// task
 
 export default route;

@@ -88,11 +88,6 @@ export const deleteWorskspaceByUser = async (workspace_ids, owner_id, time) => {
       throw new Error("not found");
     }
 
-    // tambahkan soft delete buat board nya ketika workspace nya di hapus
-    
-
-
-
     return await tx.workspace.update({
       where: {
         id: workspace_ids,
@@ -106,6 +101,13 @@ export const deleteWorskspaceByUser = async (workspace_ids, owner_id, time) => {
       },
       data: {
         deleted_at: time,
+        board: {
+          updateMany: {
+            data: {
+              deleted_at: time
+            }
+          }
+        }
       },
     });
   });
