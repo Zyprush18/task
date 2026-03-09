@@ -133,16 +133,11 @@ npx prisma generate
 
 ## 🏃 Running the Application
 
-### Development Mode
 ```bash
 npm run dev
 ```
 The server will start at `http://localhost:5000`
 
-### Production Mode
-```bash
-npm start
-```
 
 ## 📊 Database Schema
 
