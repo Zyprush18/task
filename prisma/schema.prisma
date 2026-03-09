@@ -24,7 +24,7 @@ model Users {
 
 model Workspace {
   id Int @id @default(autoincrement())
-  name String
+  name String @db.VarChar(50)
   workspaceMem WorkspaceMember[]
   board Board[]
   created_at DateTime @default(now())
@@ -35,7 +35,7 @@ model Workspace {
 
 model WorkspaceMember {
   id Int @id @default(autoincrement())
-  role Role
+  role Role 
   user_id Int
   workspace_id Int 
   user Users @relation(fields: [user_id], references: [id], onDelete: Cascade)
@@ -49,7 +49,7 @@ model WorkspaceMember {
 
 model Board {
   id Int @id @default(autoincrement())
-  name String
+  name String @db.VarChar(255)
   workspace_id Int
   workspace Workspace @relation(fields: [workspace_id], references: [id], onDelete: Cascade)
   column Column[]
@@ -60,7 +60,7 @@ model Board {
 
 model Column {
   id Int @id @default(autoincrement())
-  name String
+  name String @db.VarChar(255)
   board_id Int
   board Board @relation(fields: [board_id], references: [id], onDelete: Cascade)
   task Task[]
@@ -71,7 +71,9 @@ model Column {
 
 model Task {
   id Int @id @default(autoincrement())
-  name String
+  title String @db.VarChar(255)
+  description String @db.Text
+  position String @db.VarChar(100)
   column_id Int
   column Column @relation(fields: [column_id], references: [id], onDelete: Cascade)
   created_at DateTime @default(now())

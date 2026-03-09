@@ -44,8 +44,16 @@ export const getWorksapceById = async (workspace_id, owner_id) => {
       deleted_at: null,
     },
     include: {
-      board: true,
-      workspaceMem: true,
+      board: {
+        where: {
+          deleted_at: null,
+        },
+      },
+      workspaceMem: {
+        where: {
+          deleted_at: null,
+        },
+      },
     },
   });
 
@@ -103,6 +111,9 @@ export const deleteWorskspaceByUser = async (workspace_ids, owner_id, time) => {
         deleted_at: time,
         board: {
           updateMany: {
+            where:{
+              workspace_id: workspace_ids 
+            },
             data: {
               deleted_at: time
             }

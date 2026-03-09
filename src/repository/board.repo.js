@@ -207,7 +207,17 @@ export const columnDelete = async (id, user_id,board_id, time) => {
         }
       },
       data: {
-        deleted_at: time
+        deleted_at: time,
+        task: {
+          updateMany: {
+            where: {
+              column_id: id
+            },
+            data: {
+              deleted_at: null
+            }
+          }
+        }
       }
   });
 }

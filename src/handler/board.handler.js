@@ -25,7 +25,7 @@ export const BoardIndex = async (req, res) => {
       message: "internal server Error",
     });
   }
-};
+}
 
 export const StoreBoard = async (req, res) => {
   try {
