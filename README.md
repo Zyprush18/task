@@ -93,10 +93,7 @@ A modern REST API for managing tasks, boards, workspaces, and team collaboration
 ├── package.json                 # Project dependencies
 ├── package-lock.json            # Lock file for npm dependencies
 ├── prisma.config.ts             # Prisma configuration (if applicable)
-├── README.md                     # Project documentation
-├── API_DOCUMENTATION.md         # Detailed API reference
-├── QUICK_START.md               # Quick setup guide
-└── DEVELOPMENT.md               # Developer guide
+└── README.md                     # Project documentation
 ```
 
 ## 🚀 Installation
