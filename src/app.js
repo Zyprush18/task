@@ -7,7 +7,6 @@ import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 
 const server = express();
-const port = 5000;
 const limit = rateLimit({
     windowMs: 10 * 60 * 1000,
     limit: 50,
@@ -23,6 +22,6 @@ server.use(limit);
 server.use('/api',route);
 
 
-server.listen(port, () => {
-    console.log('🚀 server running on: http://localhost:'+port);
+server.listen(process.env.PORT, () => {
+    console.log('🚀 server running on: http://localhost:'+process.env.PORT);
 });
