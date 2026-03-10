@@ -21,6 +21,9 @@ server.use(cors());
 server.use(limit);
 server.use('/api',route);
 
+server.get('/', (req, res) => {
+    res.json({ message: 'Hello, World!' });
+});
 
 server.listen(process.env.PORT, () => {
     console.log('🚀 server running on: http://localhost:'+process.env.PORT);
