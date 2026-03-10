@@ -1,6 +1,6 @@
 import { get } from "express-http-context";
-import { createTaskSvc, deleteTaskSvc, getAllTaskSvc, getTaskSvc, updateTaskSvc } from "../service/task.service.js";
-import { TaskSchema } from "../validation/task.validation.js";
+import { createTaskSvc, deleteTaskSvc, getAllTaskSvc, getTaskSvc, moveColumnSvc, updateTaskSvc } from "../service/task.service.js";
+import { MoveTaskSchema, TaskSchema } from "../validation/task.validation.js";
 
 export const TaskIndex = async (req, res) => {
   try {
@@ -12,8 +12,6 @@ export const TaskIndex = async (req, res) => {
       data: data,
     });
   } catch (error) {
-    console.log(error);
-    
     res.status(500).json({
       message: "internal server Error",
     });
@@ -44,8 +42,6 @@ export const TaskStore = async (req,res) => {
           message: "success add new task",
         });
       } catch (error) {    
-        console.log(error);
-        
         res.status(500).json({
           message: "internal server error",
         });
@@ -105,8 +101,6 @@ export const TaskUpdate = async (req, res) => {
         message: "success update",
       });
     } catch (error) {
-      console.log(error);
-  
       if (error.message === "not found") {
         return res.status(404).json({
           message: "not found task",
@@ -135,8 +129,6 @@ export const TaskDelete = async (req, res) => {
         message: "success delete",
       });
     } catch (error) {
-      console.log(error);
-  
       if (error.message === "not found") {
         return res.status(404).json({
           message: "not found task",
@@ -148,3 +140,38 @@ export const TaskDelete = async (req, res) => {
     }
 }
 
+export const TaskMove = async (req, res) => {
+  try {
+      const task_id = req.params.id_task;
+      const column_id  = req.params.id_column;
+      if (!task_id || !column_id) {
+        return res.status(400).json({
+          message: "params task id or column id is missing",
+        });
+      }
+  
+      const user_id = get("user_id");
+  
+      const bodyreq = MoveTaskSchema.safeParse(req.body);
+      if (!bodyreq.success) {
+        return res.status(400).json({
+          message: "Validation Error",
+          error: bodyreq.error.format(),
+        });
+      }
+  
+      await moveColumnSvc(user_id, parseInt(task_id), parseInt(column_id), bodyreq.data);
+      res.status(200).json({
+        message: "success move",
+      });
+    } catch (error) {
+      if (error.message === "not found") {
+        return res.status(404).json({
+          message: "not found task",
+        });
+      }
+      res.status(500).json({
+        message: "internal server error",
+      });
+    }
+}

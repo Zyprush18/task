@@ -16,9 +16,6 @@ export const getALlTask = async (user_id) => {
                     }
                 }
             }
-        },
-        include: {
-            column: true
         }
     });
 }
@@ -57,9 +54,6 @@ export const GetTask = async (user_id, id_task) => {
                 },
                 deleted_at: null
             }
-        },
-        include: {
-            column: true
         }
     })
 } 
@@ -110,6 +104,37 @@ export const deleteTask = async (user_id, id, column_id, time) => {
         },
         data: {
             deleted_at: time
+        }
+    });
+}
+
+
+export const moveColumn = async (id_task, user_id, column_id, req) => {
+    return await prisma.task.update({
+        where: {
+            id: id_task,
+            deleted_at: null,
+            column: {
+                id: column_id,
+                board: {
+                    workspace: {
+                        workspaceMem: {
+                            some: {
+                                user_id: user_id,
+                                deleted_at: null
+                            }
+                        },
+                    },
+                },
+                deleted_at: null
+            }
+        },
+        data: {
+            column: {
+                connect: {
+                    id: req.new_id_column
+                }
+            }
         }
     });
 }

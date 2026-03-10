@@ -13,7 +13,6 @@ export const getAllBoards = async (user_id) => {
       deleted_at: null,
     },
     include: {
-      workspace: true,
       column: {
         where: {
           deleted_at: null,
@@ -72,7 +71,6 @@ export const getBoardbyId = async (user_id, id) => {
       deleted_at: null,
     },
     include: {
-      workspace: true,
       column: {
         where: {
           deleted_at: null,

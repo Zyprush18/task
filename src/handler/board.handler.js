@@ -42,8 +42,6 @@ export const StoreBoard = async (req, res) => {
       message: "success add new board",
     });
   } catch (error) {
-    console.log(error);
-
     res.status(500).json({
       message: "internal server error",
     });
@@ -67,8 +65,6 @@ export const ShowBoard = async (req, res) => {
       data: data,
     });
   } catch (error) {
-    console.log(error);
-
     if (error.message === "not found") {
       return res.status(404).json({
         message: "not found board",
@@ -104,8 +100,6 @@ export const updateBoard = async (req, res) => {
       message: "success update",
     });
   } catch (error) {
-    console.log(error);
-
     if (error.message === "not found") {
       return res.status(404).json({
         message: "not found board",
@@ -131,8 +125,6 @@ export const deleteBoard = async (req, res) => {
       message: "success delete",
     });
   } catch (error) {
-    console.log(error);
-
     if (error.message === "not found") {
       return res.status(404).json({
         message: "not found board",

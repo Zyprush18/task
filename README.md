@@ -243,6 +243,14 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ## 📚 API Documentation
 
+### Postman Collection
+
+Import the complete API collection for testing and development:
+
+[![Download Postman Collection](https://img.shields.io/badge/Postman-Collection-FF6C37?style=flat-square&logo=postman)](./postman-collection.json)
+
+Or manually import the collection file: `postman-collection.json`
+
 ### Base URL
 ```
 http://localhost:5000/api
@@ -290,7 +298,7 @@ Create a new user account.
 
 // Email already exists
 {
-  "message": "Email Already Exists"
+  "message": "Email ALready Exists"
 }
 
 // Server error
@@ -423,15 +431,124 @@ Retrieve all workspaces for the authenticated user.
 **Success Response (200 OK):**
 ```json
 {
-  "message": "success",
-  "data": [
-    {
-      "id": 1,
-      "name": "My Project",
-      "created_at": "2026-03-10T10:30:00Z",
-      "updated_at": "2026-03-10T10:30:00Z"
-    }
-  ]
+    "message": "success",
+    "data": [
+        {
+            "id": 1,
+            "name": "Alpha Team",
+            "created_at": "2026-03-10T12:03:22.564Z",
+            "updated_at": null,
+            "board": [
+                {
+                    "id": 1,
+                    "name": "Q1 Roadmap",
+                    "workspace_id": 1,
+                    "created_at": "2026-03-10T12:03:35.025Z",
+                    "updated_at": null,
+                    
+                },
+                {
+                    "id": 2,
+                    "name": "Bug Tracker",
+                    "workspace_id": 1,
+                    "created_at": "2026-03-10T12:03:35.025Z",
+                    "updated_at": null,
+                    
+                }
+            ],
+            "workspaceMem": [
+                {
+                    "id": 1,
+                    "role": "owner",
+                    "user_id": 1,
+                    "workspace_id": 1,
+                    "created_at": "2026-03-10T12:03:35.025Z",
+                    "updated_at": null,
+                    
+                },
+                {
+                    "id": 2,
+                    "role": "member",
+                    "user_id": 2,
+                    "workspace_id": 1,
+                    "created_at": "2026-03-10T12:03:35.025Z",
+                    "updated_at": null,
+                    
+                },
+                {
+                    "id": 3,
+                    "role": "member",
+                    "user_id": 3,
+                    "workspace_id": 1,
+                    "created_at": "2026-03-10T12:03:35.025Z",
+                    "updated_at": null,
+                    
+                },
+                {
+                    "id": 10,
+                    "role": "member",
+                    "user_id": 4,
+                    "workspace_id": 1,
+                    "created_at": "2026-03-10T12:12:34.963Z",
+                    "updated_at": "2026-03-10T12:39:17.054Z",
+                    
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "name": "Beta Squad",
+            "created_at": "2026-03-10T12:03:22.564Z",
+            "updated_at": null,
+            "board": [
+                {
+                    "id": 3,
+                    "name": "Sprint Board",
+                    "workspace_id": 2,
+                    "created_at": "2026-03-10T12:03:35.025Z",
+                    "updated_at": null,
+                    
+                },
+                {
+                    "id": 5,
+                    "name": "Marketing Campaign",
+                    "workspace_id": 2,
+                    "created_at": "2026-03-10T12:03:35.025Z",
+                    "updated_at": null,
+                    
+                }
+            ],
+            "workspaceMem": [
+                {
+                    "id": 4,
+                    "role": "owner",
+                    "user_id": 2,
+                    "workspace_id": 2,
+                    "created_at": "2026-03-10T12:03:35.025Z",
+                    "updated_at": null,
+                    
+                },
+                {
+                    "id": 5,
+                    "role": "member",
+                    "user_id": 4,
+                    "workspace_id": 2,
+                    "created_at": "2026-03-10T12:03:35.025Z",
+                    "updated_at": null,
+                    
+                },
+                {
+                    "id": 8,
+                    "role": "member",
+                    "user_id": 3,
+                    "workspace_id": 2,
+                    "created_at": "2026-03-10T12:03:35.025Z",
+                    "updated_at": null,
+                    
+                }
+            ]
+        }
+    ]
 }
 ```
 
@@ -541,7 +658,7 @@ Delete workspace and all associated data.
 ### Add Workspace Member
 Add a user to a workspace.
 
-**Endpoint:** `POST /workspace/createMem/:id_workspace`
+**Endpoint:** `POST /workspace/:id_workspace/member`
 
 **Authentication:** Required (Bearer token)
 
@@ -563,17 +680,36 @@ Add a user to a workspace.
 }
 ```
 
+**Error Responses:**
+```json
+// Member already exists
+{
+  "message": "member already exists"
+}
+
+// User not found
+{
+  "message": "not found member"
+}
+
+// Unauthorized
+{
+  "message": "unauthorized"
+}
+```
+
 ---
 
 ### Update Workspace Member Role
 Change member's role in workspace.
 
-**Endpoint:** `PUT /workspace/updateMem/:id_workspace`
+**Endpoint:** `PUT /workspace/:id_workspace/member/:id_old_member`
 
 **Authentication:** Required (Bearer token)
 
 **URL Parameters:**
 - `id_workspace` (required): Workspace ID
+- `id_old_member` (required): Member ID to update
 
 **Request Body:**
 ```json
@@ -586,7 +722,20 @@ Change member's role in workspace.
 **Success Response (200 OK):**
 ```json
 {
-  "message": "success update"
+  "message": "success update member"
+}
+```
+
+**Error Responses:**
+```json
+// Member not found
+{
+  "message": "not found not found member"
+}
+
+// User already exists
+{
+  "message": "user already exists"
 }
 ```
 
@@ -595,18 +744,31 @@ Change member's role in workspace.
 ### Remove Workspace Member
 Remove user from workspace.
 
-**Endpoint:** `DELETE /workspace/:id_workspace/deleteMem/:id_member`
+**Endpoint:** `DELETE /workspace/:id_workspace/member/:id_member`
 
 **Authentication:** Required (Bearer token)
 
 **URL Parameters:**
 - `id_workspace` (required): Workspace ID
-- `id_member` (required): Member ID
+- `id_member` (required): Member ID to remove
 
 **Success Response (200 OK):**
 ```json
 {
-  "message": "success delete"
+  "message": "success delete member"
+}
+```
+
+**Error Responses:**
+```json
+// Member not found
+{
+  "message": "not found member"
+}
+
+// User already exists
+{
+  "message": "user already exists"
 }
 ```
 
@@ -693,12 +855,19 @@ Retrieve board with columns and tasks.
 }
 ```
 
+**Error Response (404 Not Found):**
+```json
+{
+  "message": "not found board"
+}
+```
+
 ---
 
 ### Update Board
 Update board name.
 
-**Endpoint:** `PATCH /board/:id_board`
+**Endpoint:** `PUT /board/:id_board`
 
 **Authentication:** Required (Bearer token)
 
@@ -716,6 +885,13 @@ Update board name.
 ```json
 {
   "message": "success update"
+}
+```
+
+**Error Response (404 Not Found):**
+```json
+{
+  "message": "not found board"
 }
 ```
 
@@ -738,6 +914,13 @@ Delete board and all contained data.
 }
 ```
 
+**Error Response (404 Not Found):**
+```json
+{
+  "message": "not found board"
+}
+```
+
 ---
 
 ## 📊 Column Endpoints
@@ -745,15 +928,17 @@ Delete board and all contained data.
 ### Create Column
 Create a new column in a board.
 
-**Endpoint:** `POST /board/create/column`
+**Endpoint:** `POST /board/:id_board/column/create`
 
 **Authentication:** Required (Bearer token)
+
+**URL Parameters:**
+- `id_board` (required): Board ID
 
 **Request Body:**
 ```json
 {
-  "name": "In Progress",
-  "board_id": 1
+  "name": "In Progress"
 }
 ```
 
@@ -764,16 +949,24 @@ Create a new column in a board.
 }
 ```
 
+**Error Response (404 Not Found):**
+```json
+{
+  "message": "not found board"
+}
+```
+
 ---
 
 ### Update Column
 Update column name.
 
-**Endpoint:** `PUT /board/column/:id_column`
+**Endpoint:** `PUT /board/:id_board/column/:id_column`
 
 **Authentication:** Required (Bearer token)
 
 **URL Parameters:**
+- `id_board` (required): Board ID
 - `id_column` (required): Column ID
 
 **Request Body:**
@@ -786,7 +979,14 @@ Update column name.
 **Success Response (200 OK):**
 ```json
 {
-  "message": "success update"
+  "message": "success update column"
+}
+```
+
+**Error Response (404 Not Found):**
+```json
+{
+  "message": "not found board"
 }
 ```
 
@@ -806,7 +1006,14 @@ Delete column and all contained tasks.
 **Success Response (200 OK):**
 ```json
 {
-  "message": "success delete"
+  "message": "success delete column"
+}
+```
+
+**Error Response (404 Not Found):**
+```json
+{
+  "message": "not found board"
 }
 ```
 
@@ -854,6 +1061,7 @@ Create a new task in a column.
 ```json
 {
   "title": "Design database schema",
+  "position": "3",
   "description": "Create and document the complete database schema"
 }
 ```
@@ -906,6 +1114,103 @@ Retrieve specific task information.
 
 ---
 
+### Update Task
+Update task details.
+
+**Endpoint:** `PUT /task/:id_task/column/:id_column`
+
+**Authentication:** Required (Bearer token)
+
+**URL Parameters:**
+- `id_task` (required): Task ID
+- `id_column` (required): Column ID
+
+**Request Body:**
+```json
+{
+  "title": "Updated title",
+  "position": "1",
+  "description": "Updated description"
+}
+```
+
+**Success Response (200 OK):**
+```json
+{
+  "message": "success update"
+}
+```
+
+**Error Response (404 Not Found):**
+```json
+{
+  "message": "not found task"
+}
+```
+
+---
+
+### Delete Task
+Delete a task.
+
+**Endpoint:** `DELETE /task/:id_task/column/:id_column`
+
+**Authentication:** Required (Bearer token)
+
+**URL Parameters:**
+- `id_task` (required): Task ID
+- `id_column` (required): Column ID
+
+**Success Response (200 OK):**
+```json
+{
+  "message": "success delete"
+}
+```
+
+**Error Response (404 Not Found):**
+```json
+{
+  "message": "not found task"
+}
+```
+
+---
+
+### Move Task
+Move a task to a different column.
+
+**Endpoint:** `PATCH /task/:id_task/column/:id_column/move`
+
+**Authentication:** Required (Bearer token)
+
+**URL Parameters:**
+- `id_task` (required): Task ID
+- `id_column` (required): Current Column ID
+
+**Request Body:**
+```json
+{
+  "new_id_column": 2
+}
+```
+
+**Success Response (200 OK):**
+```json
+{
+  "message": "success move"
+}
+```
+
+**Error Response (404 Not Found):**
+```json
+{
+  "message": "not found task"
+}
+```
+
+---
+
 ## ⚠️ Error Handling
 
 ### Standard Error Response Format
@@ -929,14 +1234,28 @@ Retrieve specific task information.
 
 ### Common Error Messages
 
-| Error | Cause |
-|-------|-------|
-| `auth token is required` | Missing Authorization header |
-| `auth token is missing` | Malformed Authorization header |
-| `Validation Error` | Request body fails validation |
-| `not found workspace` | Workspace doesn't exist |
-| `Email Already Exists` | Email is already registered |
-| `refresh token expire` | Refresh token has expired |
+| Error | Cause | Status |
+|-------|-------|--------|
+| `auth token is required` | Missing Authorization header | 401 |
+| `auth token is missing` | Malformed Authorization header | 401 |
+| `Validation Error` | Request body fails validation | 400 |
+| `not found workspace` | Workspace doesn't exist | 404 |
+| `not found board` | Board doesn't exist | 404 |
+| `not found task` | Task doesn't exist | 404 |
+| `not found member` | Member doesn't exist | 404 |
+| `Email ALready Exists` | Email is already registered | 400 |
+| `refresh token expire` | Refresh token has expired | 401 |
+| `refresh token is missing` | Refresh token cookie not provided | 401 |
+| `Invalid Email or Password` | Login credentials are incorrect | 404 |
+| `member already exists` | User already a member of workspace | 400 |
+| `user already exists` | User assignment error | 400 |
+| `unauthorized` | User lacks permission for action | 401 |
+| `params worksapce id is missing` | Required parameter not provided | 400 |
+| `params board id is missing` | Required parameter not provided | 400 |
+| `params task id is missing` | Required parameter not provided | 400 |
+| `params column id is missing` | Required parameter not provided | 400 |
+| `internal server Error` | Server-side error occurred | 500 |
+| `internal server error` | Server-side error occurred | 500 |
 
 ---
 
@@ -975,37 +1294,52 @@ curl -X POST http://localhost:5000/api/login \
   }'
 # Response: { "access_token": "...", "message": "success login" }
 
-# 3. Create Workspace
+# 3. Get Profile
+curl -X GET http://localhost:5000/api/profile \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+
+# 4. Create Workspace
 curl -X POST http://localhost:5000/api/workspace/create \
   -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{ "name": "My Project" }'
 
-# 4. Create Board
+# 5. Create Board
 curl -X POST http://localhost:5000/api/board/create \
   -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{ "name": "Todo Board", "workspace_id": 1 }'
 
-# 5. Create Column
-curl -X POST http://localhost:5000/api/board/create/column \
+# 6. Create Column
+curl -X POST http://localhost:5000/api/board/1/column/create \
   -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{ "name": "To Do", "board_id": 1 }'
+  -d '{ "name": "To Do" }'
 
-# 6. Create Task
+# 7. Create Task
 curl -X POST http://localhost:5000/api/task/1/create \
   -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "title": "Complete setup",
-    "position": "Position task in column board",
     "description": "Set up all project requirements"
   }'
+
+# 8. Add Workspace Member
+curl -X POST http://localhost:5000/api/workspace/1/member \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "user_id": 2, "role": "member" }'
+
+# 9. Move Task to Another Column
+curl -X PATCH http://localhost:5000/api/task/1/column/1/move \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "target_column_id": 2 }'
+
+# 10. Logout
+curl -X POST http://localhost:5000/api/logout \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
 ```
 
-
-## 👥 Contributing
-
-Contributions are welcome! Please follow the existing code patterns and add tests for new features.
 

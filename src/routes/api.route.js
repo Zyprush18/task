@@ -27,7 +27,7 @@ import {
   updateBoard,
   updateColumn,
 } from "../handler/board.handler.js";
-import { TaskDelete, TaskIndex, TaskShow, TaskStore, TaskUpdate } from "../handler/task.handler.js";
+import { TaskDelete, TaskIndex, TaskMove, TaskShow, TaskStore, TaskUpdate } from "../handler/task.handler.js";
 
 const route = express.Router();
 
@@ -69,5 +69,6 @@ route.post("/task/:column_id/create", checkAuth, TaskStore);
 route.get("/task/:id_task", checkAuth, TaskShow);
 route.put("/task/:id_task/column/:id_column", checkAuth, TaskUpdate);
 route.delete("/task/:id_task/column/:id_column", checkAuth, TaskDelete);
+route.patch("/task/:id_task/column/:id_column/move", checkAuth, TaskMove);
 
 export default route;
