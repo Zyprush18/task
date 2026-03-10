@@ -31,12 +31,12 @@ export const deleteBoardSvc = async (id,user_id) => {
     return data;
 }
 
-export const createColumnSvc = async (user_id, req) => {
-    return await createColumn(user_id, req);
+export const createColumnSvc = async (user_id, board_id, req) => {
+    return await createColumn(user_id, board_id, req);
 }
 
-export const updateColumnSvc = async (id,user_id, req) => {
-    const column = await columnUpdate(id, user_id, req);
+export const updateColumnSvc = async (id,user_id, board_id,req) => {
+    const column = await columnUpdate(id, user_id, board_id,req);
     if (!column) {
         throw new Error("not found");
     }

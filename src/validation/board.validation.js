@@ -6,6 +6,5 @@ export const BoardSchema = z.object({
 });
 
 export const ColumnSchema = z.object({
-    name: z.string().min(3),
-    board_id: z.int()
+    name: z.string().min(3)
 })

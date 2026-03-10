@@ -63,3 +63,53 @@ export const GetTask = async (user_id, id_task) => {
         }
     })
 } 
+
+export const updateTask = async (user_id, id, column_id, data) => {
+    return await prisma.task.update({
+        where: {
+            id: id,
+            deleted_at: null,
+            column: {
+                id: column_id,
+                board: {
+                    workspace: {
+                        workspaceMem: {
+                            some: {
+                                user_id: user_id,
+                                deleted_at: null
+                            }
+                        },
+                    },
+                },
+                deleted_at: null
+            }
+        },
+        data: data
+    });
+}
+
+export const deleteTask = async (user_id, id, column_id, time) => {
+    return await prisma.task.update({
+        where: {
+            id: id,
+            deleted_at: null,
+            column: {
+                id: column_id,
+                board: {
+                    workspace: {
+                        workspaceMem: {
+                            some: {
+                                user_id: user_id,
+                                deleted_at: null
+                            }
+                        },
+                    },
+                },
+                deleted_at: null
+            }
+        },
+        data: {
+            deleted_at: time
+        }
+    });
+}

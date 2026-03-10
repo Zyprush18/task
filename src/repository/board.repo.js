@@ -145,9 +145,9 @@ export const boardDelete = async (id, user_id, time) => {
   });
 };
 
-export const createColumn = async (user_id,req) => {
+export const createColumn = async (user_id, board_id,req) => {
   return await prisma.$transaction(async (tx)=> {
-    const board = await getBoardbyId(user_id, req.board_id);
+    const board = await getBoardbyId(user_id, board_id);
     if (!board) {
       throw new Error("not found");
     }
@@ -165,13 +165,13 @@ export const createColumn = async (user_id,req) => {
   });
 }
 
-export const columnUpdate = async (id,user_id, req) => {
+export const columnUpdate = async (id,user_id, board_id,req) => {
   return await prisma.column.update({
       where: {
         id: id,
         deleted_at: null,
         board: {
-          id: req.board_id,
+          id: board_id,
           deleted_at: null,
           workspace: {
             workspaceMem: {

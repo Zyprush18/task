@@ -139,6 +139,8 @@ export const createMember = async (member_id, worspace_id, owner_id) => {
       throw new Error(`not found user id: ${member_id}`);
     }
 
+    
+
     const member = await tx.workspaceMember.create({
       data: {
         role: "member",

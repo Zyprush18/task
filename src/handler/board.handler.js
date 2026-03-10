@@ -153,9 +153,16 @@ export const storeColumn = async (req, res) => {
         error: bodyreq.error.format(),
       });
     }
+    const board_id = parseInt(req.params.id_board);
+    if (!board_id) {
+      return res.status(400).json({
+        message: "params board id is missing",
+      });
+    }
+
     const user_id = get('user_id');
 
-    await createColumnSvc(user_id,bodyreq.data);
+    await createColumnSvc(user_id, board_id,bodyreq.data);
 
     res.status(201).json({
       message: "success add new column",
@@ -176,9 +183,10 @@ export const storeColumn = async (req, res) => {
 export const updateColumn = async (req, res) => {
   try {
     const column_id = parseInt(req.params.id_column);
-    if (!column_id) {
+    const board_id = parseInt(req.params.id_board);
+    if (!column_id || !board_id) {
       return res.status(400).json({
-        message: "params column id is missing",
+        message: "params column id or board id is missing",
       });
     }
 
@@ -191,7 +199,7 @@ export const updateColumn = async (req, res) => {
     }
     const user_id = get('user_id');
 
-    await updateColumnSvc(column_id,user_id,bodyreq.data);
+    await updateColumnSvc(column_id,user_id, board_id,bodyreq.data);
 
     res.status(200).json({
       message: "success update column",
