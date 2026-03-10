@@ -22,7 +22,6 @@ export const loginService =  async (bodyreq) =>{
     if (!verifiedPw(bodyreq.password, data.password)) {
         throw new Error("data not found");  
     }
-
     const tokenAccess = generateToken(data.id, data.email);
     const tokenRefresh = generateRefreshRoken(data.id, data.email);
 

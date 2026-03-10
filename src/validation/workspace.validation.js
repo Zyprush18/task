@@ -5,6 +5,5 @@ export const workspaceSchema = z.object({
 });
 
 export const workspaceMemSchema = z.object({
-    user_id: z.int(),
-    old_user_id: z.int().optional()
+    user_id: z.int()
 });

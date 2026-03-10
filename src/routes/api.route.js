@@ -47,14 +47,14 @@ route.delete("/workspace/:id_workspace", checkAuth, deletedWorkspace);
 
 // workspace member
 route.post("/workspace/:id_workspace/member", checkAuth, storeMemWorkspace);
-route.put("/workspace/:id_workspace/member/:id_member", checkAuth, updateMemWorkspace);
+route.put("/workspace/:id_workspace/member/:id_old_member", checkAuth, updateMemWorkspace);
 route.delete("/workspace/:id_workspace/member/:id_member", checkAuth, deleteMemWorkpace);
 
 // board
 route.get("/board", checkAuth, BoardIndex);
 route.post("/board/create", checkAuth, StoreBoard);
 route.get("/board/:id_board", checkAuth, ShowBoard);
-route.patch("/board/:id_board", checkAuth, updateBoard);
+route.put("/board/:id_board", checkAuth, updateBoard);
 route.delete("/board/:id_board", checkAuth, deleteBoard);
 
 // column
@@ -67,7 +67,7 @@ route.delete("/board/:id_board/column/:id_column", checkAuth, deleteColumn);
 route.get("/task", checkAuth, TaskIndex);
 route.post("/task/:column_id/create", checkAuth, TaskStore);
 route.get("/task/:id_task", checkAuth, TaskShow);
-route.patch("/task/:id_task/column/:id_column", checkAuth, TaskUpdate);
+route.put("/task/:id_task/column/:id_column", checkAuth, TaskUpdate);
 route.delete("/task/:id_task/column/:id_column", checkAuth, TaskDelete);
 
 export default route;

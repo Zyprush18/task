@@ -1,7 +1,7 @@
-import { set } from "express-http-context";
+import { get, set } from "express-http-context";
 import { verificationToken } from "../utils/jwt.utils.js";
 
-export const checkAuth = (req, res, next) => {
+export const checkAuth = async (req, res, next) => {
   try {
     const auth = req.headers.authorization;
     if (!auth) {
@@ -22,6 +22,7 @@ export const checkAuth = (req, res, next) => {
     // set context
     set('user_id', data.id_user);
     set('email_user', data.email_user);
+    // set('role_user', data.role);
 
     next();
     } catch (error) {
@@ -30,3 +31,15 @@ export const checkAuth = (req, res, next) => {
         });
     }
 };
+
+// export const checkRole = (...role) => {
+//     return async (req, res, next) => {
+//         const userRole = get('role_user');
+//         if (!role.includes(userRole)) {
+//             return res.status(403).json({
+//                 message: 'Forbidden: Insufficient permissions'
+//             });
+//         }
+//         next();
+//     }
+// }

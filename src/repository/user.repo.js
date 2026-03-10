@@ -12,6 +12,14 @@ export const LoginRepo = async (email) => {
     return await prisma.users.findUnique({
         where: {
             email: email
+        },
+        include: {
+            workspaceMem: {
+                where: {
+                    role: 'owner',
+                    deleted_at: null
+                }
+            }
         }
     }); 
 }

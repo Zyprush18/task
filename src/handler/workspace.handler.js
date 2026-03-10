@@ -174,6 +174,18 @@ export const storeMemWorkspace = async (req, res) => {
       message: "success add member",
     });
   } catch (error) {
+    if (error.message === 'unauthorized') {
+      return res.status(401).json({
+        message: "unauthorized",
+      })
+    }
+
+    if (error.message === "exists") {
+      return res.status(400).json({
+        message: "member already exists",
+      });
+    }
+
     if (error.message === "not found") {
       return res.status(404).json({
         message: "not found member",
@@ -196,13 +208,14 @@ export const updateMemWorkspace = async (req, res) => {
       });
     }
     const workspace_id = req.params.id_workspace;
-    if (!workspace_id) {
+    const old_member = req.params.id_old_member;
+    if (!workspace_id || !old_member) {
       return res.status(400).json({
         message: "params worksapce id is missing",
       });
     }
     const owner_id = get("user_id");
-    await updateMemberWorkspace(bodyreq.data, parseInt(workspace_id), owner_id);
+    await updateMemberWorkspace(bodyreq.data, parseInt(workspace_id), owner_id, parseInt(old_member));
 
     return res.status(200).json({
       message: "success update member",

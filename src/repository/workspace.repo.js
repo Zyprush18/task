@@ -124,9 +124,20 @@ export const deleteWorskspaceByUser = async (workspace_ids, owner_id, time) => {
   });
 };
 
-export const createMember = async (member_id, worspace_id, owner_id) => {
+export const createMember = async (member_id, workspace_id, owner_id) => {
   return await prisma.$transaction(async (tx) => {
-    const workspace = await getWorksapceById(worspace_id, owner_id);
+    const workspace = await getWorksapceById(workspace_id, owner_id);
+    const workspaceMem = workspace.workspaceMem.find((wm) => {
+       return (
+        wm.role === "member" &&
+        wm.user_id === owner_id &&
+        wm.workspace_id === workspace_id
+      );
+    });
+
+    if (workspaceMem) {
+      throw new Error("unauthorized");
+    }
 
     const users = await tx.users.findUnique({
       where: {
@@ -139,9 +150,33 @@ export const createMember = async (member_id, worspace_id, owner_id) => {
       throw new Error(`not found user id: ${member_id}`);
     }
 
+    const member  = await tx.workspaceMember.findUnique({
+      where: {
+        user_id_workspace_id: {
+          user_id: member_id,
+          workspace_id: worspace_id,
+        },
+      }
+    });
+
+    if (member.deleted_at === null) {
+      throw new Error("exists");
+    }else if (member.deleted_at !== null) {
+      return await tx.workspaceMember.update({
+        where: {
+        user_id_workspace_id: {
+          user_id: member_id,
+          workspace_id: worspace_id,
+        },
+      },
+      data: {
+        deleted_at: null
+      }
+      })
+    }
     
 
-    const member = await tx.workspaceMember.create({
+    return await tx.workspaceMember.create({
       data: {
         role: "member",
         user: {
@@ -157,13 +192,22 @@ export const createMember = async (member_id, worspace_id, owner_id) => {
       },
     });
 
-    return member;
   });
 };
 
-export const updateMember = async (req, workspace_id, owner_id, time) => {
+export const updateMember = async (req, workspace_id, owner_id, old_member_id, time) => {
   return await prisma.$transaction(async (tx) => {
     const workspace = await getWorksapceById(workspace_id, owner_id);
+    const workspaceMem = workspace.workspaceMem.find((wm) => {
+       return (
+        wm.role === "member" &&
+        wm.user_id === owner_id &&
+        wm.workspace_id === workspace_id
+      );
+    });
+    if (workspaceMem) {
+      throw new Error("unauthorized");
+    }
 
     const users = await tx.users.findUnique({
       where: {
@@ -189,7 +233,7 @@ export const updateMember = async (req, workspace_id, owner_id, time) => {
         where: {
           role: "member",
           user_id_workspace_id: {
-            user_id: req.old_user_id,
+            user_id: old_member_id,
             workspace_id: workspace.id,
           },
         },
@@ -239,6 +283,16 @@ export const updateMember = async (req, workspace_id, owner_id, time) => {
 export const deleteMember = async (owner_id, member_id, workspace_id, time) => {
  return prisma.$transaction(async (tx) => {
   const workspace = await getWorksapceById(workspace_id, owner_id);
+  const workspaceMem = workspace.workspaceMem.find((wm) => {
+       return (
+        wm.role === "member" &&
+        wm.user_id === owner_id &&
+        wm.workspace_id === workspace_id
+      );
+    });
+    if (workspaceMem) {
+      throw new Error("unauthorized");
+    }
   const users = await tx.users.findUnique({
       where: {
         id: member_id,
