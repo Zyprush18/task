@@ -8,6 +8,7 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon src/app.js",
+    "build": "prisma generateupdat",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
