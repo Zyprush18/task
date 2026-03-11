@@ -247,9 +247,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 Import the complete API collection for testing and development:
 
-[![Download Postman Collection](https://img.shields.io/badge/Postman-Collection-FF6C37?style=flat-square&logo=postman)](./postman-collection.json)
+[![Download Postman Collection](https://img.shields.io/badge/Postman-Collection-FF6C37?style=flat-square&logo=postman)](./task-managers.json)
 
-Or manually import the collection file: `postman-collection.json`
+Or manually import the collection file: `task-managers.json`
 
 ### Base URL
 ```
